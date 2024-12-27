@@ -1,0 +1,8 @@
+streamlit
+pandas
+google-generativeai
+PyPDF2
+python-dotenv
+docx2txt
+re
+time
