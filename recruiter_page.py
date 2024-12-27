@@ -56,7 +56,7 @@ def recruiter_page(recruiter_detail):
                 )
 
                 # Save the updated recruiter details back to the CSV file
-                recruiter_detail.to_csv("C:/Users/Dashu/Downloads/ATS_V1/data/recruiter_detail.csv", index=False)
+                recruiter_detail.to_csv("s3://ats-files1/data/recruiter_detail.csv", index=False)
 
                 st.success(f"Details updated for Recruiter ID {selected_recruiter_id}!")
                 st.session_state.updated = True
@@ -90,7 +90,7 @@ def recruiter_page(recruiter_detail):
                 )
 
                 # Save the updated recruiter details back to the CSV file
-                recruiter_detail.to_csv("C:/Users/Dashu/Downloads/ATS_V1/data/recruiter_detail.csv", index=False)
+                recruiter_detail.to_csv("s3://ats-files1/data/recruiter_detail.csv", index=False)
 
                 st.success("New recruiter added successfully!")
                 st.session_state.updated = True
@@ -112,7 +112,7 @@ def recruiter_page(recruiter_detail):
                 ]
 
                 # Save the updated recruiter details back to the CSV file
-                recruiter_detail.to_csv("C:/Users/Dashu/Downloads/ATS_V1/data/recruiter_detail.csv", index=False,use_container_width=True)
+                recruiter_detail.to_csv("s3://ats-files1/data/recruiter_detail.csv", index=False,use_container_width=True)
 
                 st.success(f"Recruiter ID {selected_recruiter_id} removed successfully!")
                 st.session_state.updated = True
@@ -139,7 +139,7 @@ def main():
     if "updated" not in st.session_state:
         st.session_state.updated = False
 
-    filepath = "C:/Users/Dashu/Downloads/ATS_V1/data/recruiter_detail.csv"
+    filepath = "s3://ats-files1/data/recruiter_detail.csv"
     recruiter_detail = load_recruiter_data(filepath)
 
     # Refresh functionality (optional)
