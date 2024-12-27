@@ -40,7 +40,7 @@ def submissions_page(submission_table):
                 submission_table.loc[
                     submission_table["job_id"] == selected_job_id, "notes"
                 ] = new_notes
-                submission_table.to_csv('C:/Users/Dashu/Downloads/ATS_V1/data/submission_table.csv', index=False)
+                submission_table.to_csv('s3://ats-files1/data/submission_table.csv', index=False)
                 st.success(f"Notes updated for Job ID {selected_job_id}!")
                 st.session_state.updated = True  # Set session state to trigger a refresh
 
@@ -79,7 +79,7 @@ def submissions_page(submission_table):
                 submission_table = pd.concat(
                     [submission_table, pd.DataFrame([new_row])], ignore_index=True
                 )
-                submission_table.to_csv('C:/Users/Dashu/Downloads/ATS_V1/data/submission_table.csv', index=False)
+                submission_table.to_csv('s3://ats-files1/data/submission_table.csv', index=False)
                 st.success("New submission added successfully!")
                 st.session_state.updated = True
 
@@ -95,7 +95,7 @@ def submissions_page(submission_table):
 
         if st.button("Remove Submission"):
             submission_table = submission_table[submission_table["job_id"] != selected_job_id]
-            submission_table.to_csv('C:/Users/Dashu/Downloads/ATS_V1/data/submission_table.csv', index=False)  # Save changes to CSV
+            submission_table.to_csv('s3://ats-files1/data/submission_table.csv', index=False)  # Save changes to CSV
             st.success(f"Submission with Job ID {selected_job_id} removed successfully!")
             st.session_state.updated = True  # Set session state to trigger a refresh
 
@@ -118,7 +118,7 @@ def main():
     if "updated" not in st.session_state:
         st.session_state.updated = False
 
-    filepath = 'C:/Users/Dashu/Downloads/ATS_V1/data/submission_table.csv'
+    filepath = 's3://ats-files1/data/submission_table.csv'
     submission_table = load_submission_data(filepath)
 
     # Refresh the page when the state is updated
