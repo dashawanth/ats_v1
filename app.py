@@ -1,12 +1,12 @@
 import streamlit as st
-from utils.data_loader import load_data
-from utils.recruiter_page import recruiter_page
-from utils.jobs_page import jobs_page
-from utils.submissions_page import submissions_page
-from utils.single_page import single_page
-from utils.path_page import path_to_file
-from utils.dashboard import dashboard
-from utils.ATS_Score import process_resumes
+from data_loader import load_data
+from recruiter_page import recruiter_page
+from jobs_page import jobs_page
+from submissions_page import submissions_page
+from single_page import single_page
+from path_page import path_to_file
+from dashboard import dashboard
+from ATS_Score import process_resumes
 
 
 
