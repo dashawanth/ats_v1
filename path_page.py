@@ -169,7 +169,7 @@ def path_to_file():
                 else:
                     st.dataframe(df[['Name','Phone Number','Email ID']],use_container_width=True)
                 # Save the DataFrame to a CSV file
-                df.to_csv(r"C:/Users/Dashu/Downloads/ATS_V1/data/resumes_folder_output.csv", index=False)
+                df.to_csv(r"s3://ats-files1/data/resumes_folder_output.csv", index=False)
                 st.success("Your folder data has been successfully saved to resumes_folder_output.csv")
             else:
                 st.warning("No data was extracted from the resumes.")
