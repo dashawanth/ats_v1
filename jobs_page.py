@@ -64,7 +64,7 @@ def jobs_page(job_requirements):
 
                 # Save the updated job details back to the CSV file
                 job_requirements.to_csv(
-                    r'C:/Users/Dashu/Downloads/ATS_V1/data/job_requirements.csv',
+                    r's3://ats-files1/data/job_requirements.csv',
                     index=False,
                 )
 
@@ -103,7 +103,7 @@ def jobs_page(job_requirements):
 
                 # Save the updated job details back to the CSV file
                 job_requirements.to_csv(
-                    "C:/Users/Dashu/Downloads/ATS_V1/data/job_requirements.csv",
+                    "s3://ats-files1/data/job_requirements.csv",
                     index=False,
                 )
 
@@ -129,7 +129,7 @@ def jobs_page(job_requirements):
 
                 # Save the updated job details back to the CSV file
                 job_requirements.to_csv(
-                    "C:/Users/Dashu/Downloads/ATS_V1/data/job_requirements.csv",
+                    "s3://ats-files1/data/job_requirements.csv",
                     index=False,
                 )
 
@@ -161,7 +161,7 @@ def main():
     if "updated" not in st.session_state:
         st.session_state.updated = False
 
-    filepath = "C:/Users/Dashu/Downloads/ATS_V1/data/job_requirements.csv"
+    filepath = "s3://ats-files1/data/job_requirements.csv"
     job_detail = load_job_data(filepath)
 
     # Refresh functionality (optional)
