@@ -86,19 +86,16 @@ def submissions_page(submission_table):
     elif action == "Remove submission":
         st.subheader("Remove a Submission")
 
-        job_ids = filtered_df_search["job_id"].tolist()
-        if not job_ids:
-            st.info("No Job IDs available for removal.")
-            return
+        job_ids = filtered_df_search["job_id"].astype(int).tolist()
+        job_ids.insert(0, "Select a Job ID")  # Add placeholder
 
         selected_job_id = st.selectbox("Select Job ID to Remove:", job_ids)
 
-        if st.button("Remove Submission"):
+        if selected_job_id != "Select a Job ID" and st.button("Remove Submission"):
             submission_table = submission_table[submission_table["job_id"] != selected_job_id]
             submission_table.to_csv('s3://ats-files1/data/submission_table.csv', index=False)  # Save changes to CSV
             st.success(f"Submission with Job ID {selected_job_id} removed successfully!")
             st.session_state.updated = True  # Set session state to trigger a refresh
-
 
 # Load data from CSV
 def load_submission_data(filepath):
