@@ -112,7 +112,7 @@ def recruiter_page(recruiter_detail):
                 ]
 
                 # Save the updated recruiter details back to the CSV file
-                recruiter_detail.to_csv("s3://ats-files1/data/recruiter_detail.csv", index=False,use_container_width=True)
+                recruiter_detail.to_csv("s3://ats-files1/data/recruiter_detail.csv", index=False)
 
                 st.success(f"Recruiter ID {selected_recruiter_id} removed successfully!")
                 st.session_state.updated = True
