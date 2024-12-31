@@ -7,11 +7,11 @@ def submissions_page(submission_table):
     # Search functionality
     search_term = st.text_input("Search by Client Name:")
     filtered_df_search = submission_table[
-        submission_table["client_name"].str.contains(search_term, case=False, na=False)
+        submission_table["Client_Name"].str.contains(search_term, case=False, na=False)
     ]
 
-    with st.expander("Submission Table"):
-        st.dataframe(filtered_df_search,hide_index=True, use_container_width=True)
+    with st.expander("Submission Table", expanded=bool(search_term)):
+        st.dataframe(filtered_df_search, hide_index=True, use_container_width=True)
 
     # Radio button to toggle between options
     action = st.radio(
@@ -22,23 +22,24 @@ def submissions_page(submission_table):
     if action == "Edit Notes for a Submission":
         st.subheader("Edit Notes for a Submission")
 
-        job_ids = filtered_df_search["job_id"].tolist()
-        job_ids.insert(0, "Select a Job ID")  # Add placeholder
+        job_ids = filtered_df_search["Job_Id"].tolist()
+        job_ids.insert(0, "Select Job ID")  # Add placeholder
 
         selected_job_id = st.selectbox("Select Job ID to Edit Notes:", job_ids)
 
-        if selected_job_id != "Select a Job ID":
+        if selected_job_id != "Select Job ID":
+            selected_job_id = int(selected_job_id)
             current_notes = submission_table.loc[
-                submission_table["job_id"] == selected_job_id, "notes"
+                submission_table["Job_Id"] == selected_job_id, "Notes"
             ].values[0] if not submission_table.loc[
-                submission_table["job_id"] == selected_job_id, "notes"
+                submission_table["Job_Id"] == selected_job_id, "Notes"
             ].empty else ""
 
             new_notes = st.text_area("Update Notes:", value=current_notes)
 
             if st.button("Save Notes"):
                 submission_table.loc[
-                    submission_table["job_id"] == selected_job_id, "notes"
+                    submission_table["Job_Id"] == selected_job_id, "Notes"
                 ] = new_notes
                 submission_table.to_csv('s3://ats-files1/data/submission_table.csv', index=False)
                 st.success(f"Notes updated for Job ID {selected_job_id}!")
@@ -63,18 +64,18 @@ def submissions_page(submission_table):
             submitted = st.form_submit_button("Add Submission")
             if submitted:
                 new_row = {
-                    "job_id": submission_table["job_id"].max() + 1,
-                    "date_of_submission": new_date,
-                    "client_name": new_client_name,
-                    "job_title": new_job_title,
-                    "candidate_city": new_candidate_city,
-                    "candidate_state": new_candidate_state,
-                    "candidate_country": new_candidate_country,
-                    "visa": new_visa,
-                    "recruiter": new_recruiter,
-                    "pay_rate": new_pay_rate,
-                    'status': new_status,
-                    "notes": new_notes,
+                    "Job_Id": int(submission_table["Job_Id"].max() + 1),
+                    "Date_of_Submission": new_date,
+                    "Client_Name": new_client_name,
+                    "Job_Title": new_job_title,
+                    "Candidate_City": new_candidate_city,
+                    "Candidate_State": new_candidate_state,
+                    "Candidate_Country": new_candidate_country,
+                    "Visa": new_visa,
+                    "Recruiter": new_recruiter,
+                    "Pay_Rate": new_pay_rate,
+                    'Status': new_status,
+                    "Notes": new_notes,
                 }
                 submission_table = pd.concat(
                     [submission_table, pd.DataFrame([new_row])], ignore_index=True
@@ -86,27 +87,31 @@ def submissions_page(submission_table):
     elif action == "Remove submission":
         st.subheader("Remove a Submission")
 
-        job_ids = filtered_df_search["job_id"].astype(int).tolist()
-        job_ids.insert(0, "Select a Job ID")  # Add placeholder
+        job_ids = filtered_df_search["Job_Id"].tolist()
+        job_ids.insert(0, "Select Job ID")  # Add placeholder
 
         selected_job_id = st.selectbox("Select Job ID to Remove:", job_ids)
 
-        if selected_job_id != "Select a Job ID" and st.button("Remove Submission"):
-            submission_table = submission_table[submission_table["job_id"] != selected_job_id]
+        if selected_job_id != "Select Job ID" and st.button("Remove Submission"):
+            selected_job_id = int(selected_job_id)
+            submission_table = submission_table[submission_table["Job_Id"] != selected_job_id]
             submission_table.to_csv('s3://ats-files1/data/submission_table.csv', index=False)  # Save changes to CSV
             st.success(f"Submission with Job ID {selected_job_id} removed successfully!")
             st.session_state.updated = True  # Set session state to trigger a refresh
 
+
 # Load data from CSV
 def load_submission_data(filepath):
     try:
-        return pd.read_csv(filepath)
+        data = pd.read_csv(filepath)
+        data["Job_Id"] = data["Job_Id"].astype(int)  # Ensure job_id is integer
+        return data
     except FileNotFoundError:
         st.warning("File not found. Starting with an empty dataset.")
         return pd.DataFrame(columns=[
-            "job_id", "date_of_submission", "client_name", "job_title",
-            "candidate_city", "candidate_state", "candidate_country",
-            "visa", "recruiter", "pay_rate", "notes"
+            "Job_Id", "Date_of_Submission", "Client_Name", "Job_Title",
+            "Candidate_City", "Candidate_State", "Candidate_Country",
+            "Visa", "Recruiter", "Pay_Rate", "Notes"
         ])
 
 # Main execution
