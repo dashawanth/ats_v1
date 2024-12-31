@@ -4,15 +4,16 @@ import pandas as pd
 def recruiter_page(recruiter_detail):
     st.header("Recruiter Details")
 
-    # Search functionality to filter recruiters by name
-    search_term = st.text_input("Search by name:")
+    # Search functionality to filter recruiters by recruiter_id
+    search_term = st.text_input("Search by Recruiter ID:")
 
     # Filter data based on the search term
     filtered_df_search = recruiter_detail[
-        recruiter_detail["name"].str.contains(search_term, case=False, na=False)
+        recruiter_detail["Recruiter_Id"].astype(str).str.contains(search_term, case=False, na=False)
     ]
 
-    with st.expander("Recruiter Details"):
+    # Automatically expand the expander if there is a search term
+    with st.expander("Recruiter Details", expanded=bool(search_term)):
         st.dataframe(filtered_df_search, hide_index=True, use_container_width=True)
 
     # Radio buttons for selecting action
@@ -25,28 +26,34 @@ def recruiter_page(recruiter_detail):
         st.subheader("Edit Recruiter Details")
 
         # Dropdown menu to select a recruiter with an empty placeholder
-        recruiter_ids = recruiter_detail["recruiter_id"].tolist()
-        recruiter_ids.insert(0, "Select a Recruiter ID")  # Add a placeholder option
+        recruiter_ids = recruiter_detail["Recruiter_Id"].tolist()
+        recruiter_ids.insert(0, "Select Recruiter ID")  # Add a placeholder option
 
         selected_recruiter_id = st.selectbox("Select Recruiter ID:", recruiter_ids)
 
-        if selected_recruiter_id and selected_recruiter_id != "Select a Recruiter ID":
+        if selected_recruiter_id and selected_recruiter_id != "Select Recruiter ID":
             # Retrieve current details
             current_row = recruiter_detail[
-                recruiter_detail["recruiter_id"] == selected_recruiter_id
+                recruiter_detail["Recruiter_Id"] == selected_recruiter_id
             ].iloc[0]
 
-            updated_name = st.text_input("Name:", value=current_row["name"])
-            updated_email = st.text_input("Email:", value=current_row["email"])
-            updated_phone_number = st.text_input("Phone Number:", value=current_row["phone_number"])
-            updated_location = st.text_input("Location:", value=current_row["location"])
+            updated_name = st.text_input("Name:", value=current_row["Name"])
+            updated_email = st.text_input("Email:", value=current_row["Email"])
+            updated_phone_number = st.text_input("Phone Number (format: XXX-XXX-XXXX):", value=current_row["Phone_Number"])
+
+            # Validate phone number format
+            if len(updated_phone_number) == 10 and updated_phone_number.isdigit():
+                updated_phone_number = f"{updated_phone_number[:3]}-{updated_phone_number[3:6]}-{updated_phone_number[6:]}"
+            elif len(updated_phone_number) != 12 or not updated_phone_number.replace("-", "").isdigit():
+                st.warning("Please enter a valid 10-digit phone number in the format XXX-XXX-XXXX.")
+            updated_location = st.text_input("Location:", value=current_row["Location"])
             updated_designation = st.text_input("Designation:", value=current_row["Designation"])
 
             if st.button("Save Changes"):
                 # Update the details in the dataframe
                 recruiter_detail.loc[
-                    recruiter_detail["recruiter_id"] == selected_recruiter_id,
-                    ["name", "email", "phone_number", "location", "Designation"],
+                    recruiter_detail["Recruiter_Id"] == selected_recruiter_id,
+                    ["Name", "Email", "Phone_Number", "Location", "Designation"],
                 ] = (
                     updated_name,
                     updated_email,
@@ -69,18 +76,24 @@ def recruiter_page(recruiter_detail):
             #new_recruiter_id = st.text_input("Recruiter ID:")
             new_name = st.text_input("Name:")
             new_email = st.text_input("Email:")
-            new_phone_number = st.text_input("Phone Number:")
+            new_phone_number = st.text_input("Phone Number (format: XXX-XXX-XXXX):", max_chars=10)
+
+            # Validate phone number format
+            if len(new_phone_number) == 10 and new_phone_number.isdigit():
+                new_phone_number = f"{new_phone_number[:3]}-{new_phone_number[3:6]}-{new_phone_number[6:]}"
+            elif len(new_phone_number) != 12 or not new_phone_number.replace("-", "").isdigit():
+                st.warning("Please enter a valid 10-digit phone number in the format XXX-XXX-XXXX.")
             new_location = st.text_input("Location:")
             new_designation = st.text_input("Designation:")
 
             submitted = st.form_submit_button("Submit")
             if submitted:
                 new_row = {
-                    "recruiter_id": recruiter_detail["recruiter_id"].max() + 1,
-                    "name": new_name,
-                    "email": new_email,
-                    "phone_number": new_phone_number,
-                    "location": new_location,
+                    "Recruiter_Id": recruiter_detail["Recruiter_Id"].max() + 1,
+                    "Name": new_name,
+                    "Email": new_email,
+                    "Phone_Number": new_phone_number,
+                    "Location": new_location,
                     "Designation": new_designation,
                 }
 
@@ -99,16 +112,16 @@ def recruiter_page(recruiter_detail):
         st.subheader("Remove Recruiter")
 
         # Dropdown menu to select a recruiter to remove with a placeholder option
-        recruiter_ids = recruiter_detail["recruiter_id"].tolist()
-        recruiter_ids.insert(0, "Select a Recruiter ID")  # Add a placeholder option
+        recruiter_ids = recruiter_detail["Recruiter_Id"].tolist()
+        recruiter_ids.insert(0, "Select Recruiter ID")  # Add a placeholder option
 
         selected_recruiter_id = st.selectbox("Select Recruiter ID to Remove:", recruiter_ids)
 
-        if selected_recruiter_id and selected_recruiter_id != "Select a Recruiter ID":
+        if selected_recruiter_id and selected_recruiter_id != "Select Recruiter ID":
             if st.button("Remove Recruiter"):
                 # Remove the selected recruiter
                 recruiter_detail = recruiter_detail[
-                    recruiter_detail["recruiter_id"] != selected_recruiter_id
+                    recruiter_detail["Recruiter_Id"] != selected_recruiter_id
                 ]
 
                 # Save the updated recruiter details back to the CSV file
@@ -116,6 +129,8 @@ def recruiter_page(recruiter_detail):
 
                 st.success(f"Recruiter ID {selected_recruiter_id} removed successfully!")
                 st.session_state.updated = True
+
+                
 # Load data from CSV
 def load_recruiter_data(filepath):
     try:
@@ -124,11 +139,11 @@ def load_recruiter_data(filepath):
         st.warning("File not found. Starting with an empty dataset.")
         return pd.DataFrame(
             columns=[
-                "recruiter_id",
-                "name",
-                "email",
-                "phone_number",
-                "location",
+                "Recruiter_Id",
+                "Name",
+                "Email",
+                "Phone_Number",
+                "Location",
                 "Designation",
             ]
         )
