@@ -3,13 +3,14 @@ import pandas as pd
 
 def jobs_page(job_requirements):
     st.header('Job Requirements')
-    search_term = st.text_input("Search by jd_details:")
+    search_term = st.text_input("Search by Job Description:")
 
     # Filter data based on the search term
     filtered_df_search = job_requirements[
-        (job_requirements['jd_details'].str.contains(search_term, case=False, na=False)) 
+        (job_requirements['Job_Description'].str.contains(search_term, case=False, na=False)) 
     ]
-    with st.expander("Job Requirements"):
+    # Automatically expand the expander if there is a search term
+    with st.expander("Job Requirements", expanded=bool(search_term)):
         st.dataframe(filtered_df_search, hide_index=True, use_container_width=True)
     
     
@@ -23,34 +24,34 @@ def jobs_page(job_requirements):
         st.subheader("Edit Job Details")
 
         # Dropdown menu to select a job with a placeholder option
-        job_ids = job_requirements["job_id"].tolist()
-        job_ids.insert(0, "Select a Job ID")  # Add a placeholder option
+        job_ids = job_requirements["Job_Id"].tolist()
+        job_ids.insert(0, "Select Job ID")  # Add a placeholder option
 
         selected_job_id = st.selectbox("Select Job ID:", job_ids)
 
-        if selected_job_id and selected_job_id != "Select a Job ID":
+        if selected_job_id and selected_job_id != "Select Job ID":
             # Retrieve current details
             current_row = job_requirements[
-                job_requirements["job_id"] == selected_job_id
+                job_requirements["Job_Id"] == selected_job_id
             ].iloc[0]
 
-            updated_job_details = st.text_input("Job Details:", value=current_row.get("jd_details", ""))
-            updated_jd_location = st.text_input("Job Location:", value=current_row.get("job_location", ""))
-            updated_bill_rate = st.text_input("Job Bill Rate:", value=current_row.get("bill_rate", ""))
-            updated_visas = st.text_input("Visas:", value=current_row.get("visas", ""))
-            updated_Description = st.text_input("Description:", value=current_row.get("Description", ""))
+            updated_job_details = st.text_input("Job Details:", value=current_row.get("Job_Title", ""))
+            updated_jd_location = st.text_input("Job Location:", value=current_row.get("Job_Location", ""))
+            updated_bill_rate = st.text_input("Job Bill Rate:", value=current_row.get("Bill_Rate", ""))
+            updated_visas = st.text_input("Visas:", value=current_row.get("Visa", ""))
+            updated_Description = st.text_input("Description:", value=current_row.get("Job_Description", ""))
             updated_Client = st.text_input("Client:", value=current_row.get("Client", ""))
 
             if st.button("Save Changes", key="edit_save_changes"):
                 # Update the details in the dataframe
                 job_requirements.loc[
-                    job_requirements["job_id"] == selected_job_id,
+                    job_requirements["Job_Id"] == selected_job_id,
                     [
-                        "jd_details",
-                        "job_location",
-                        "bill_rate",
-                        "visas",
-                        "Description",
+                        "Job_Title",
+                        "Job_Location",
+                        "Bill_Rate",
+                        "Visa",
+                        "Job_Description",
                         "Client",
                     ],
                 ] = (
@@ -77,22 +78,22 @@ def jobs_page(job_requirements):
 
         # Form to add a new job
         with st.form("add_job_form"):
-            new_jd_details = st.text_input("Job Details:", value="")
+            new_jd_details = st.text_input("Job Title:", value="")
             new_jd_location = st.text_input("Job Location:", value="")
             new_job_bill_rate = st.text_input("Job Bill Rate:", value="")
-            new_visas = st.text_input("Visas:", value="")
-            new_Description = st.text_input("Description:", value="")
+            new_visas = st.text_input("Visa:", value="")
+            new_Description = st.text_input("Job Description:", value="")
             new_Client = st.text_input("Client:", value="")
 
             submitted = st.form_submit_button("Submit")
             if submitted:
                 new_row = {
-                    "job_id": job_requirements["job_id"].max() + 1 if not job_requirements.empty else 1,
-                    "jd_details": new_jd_details,
-                    "job_location": new_jd_location,
-                    "bill_rate": new_job_bill_rate,
-                    "visas": new_visas,
-                    "Description": new_Description,
+                    "Job_Id": job_requirements["Job_Id"].max() + 1 if not job_requirements.empty else 1,
+                    "Job_Title": new_jd_details,
+                    "Job_Location": new_jd_location,
+                    "Bill_Rate": new_job_bill_rate,
+                    "Visa": new_visas,
+                    "Job_Description": new_Description,
                     "Client": new_Client,
                 }
 
@@ -115,16 +116,16 @@ def jobs_page(job_requirements):
         st.subheader("Remove Job")
 
         # Dropdown menu to select a job with a placeholder option
-        job_ids = job_requirements["job_id"].tolist()
-        job_ids.insert(0, "Select a Job ID")  # Add a placeholder option
+        job_ids = job_requirements["Job_Id"].tolist()
+        job_ids.insert(0, "Select Job ID")  # Add a placeholder option
 
         selected_job_id = st.selectbox("Select Job ID to Remove:", job_ids)
 
-        if selected_job_id and selected_job_id != "Select a Job ID":
+        if selected_job_id and selected_job_id != "Select Job ID":
             if st.button("Remove Job"):
                 # Remove the job from the dataframe
                 job_requirements = job_requirements[
-                    job_requirements["job_id"] != selected_job_id
+                    job_requirements["Job_Id"] != selected_job_id
                 ]
 
                 # Save the updated job details back to the CSV file
@@ -145,12 +146,12 @@ def load_job_data(filepath):
         st.warning("File not found. Starting with an empty dataset.")
         return pd.DataFrame(
             columns=[
-                "job_id",
-                "job_details",
-                "job_location",
-                "bill_rate",
-                "visas",
-                "Description",
+                "Job_Id",
+                "Job_Title",
+                "Job_Location",
+                "Bill_Rate",
+                "Visa",
+                "Job_Description",
                 "Client"
             ]
         )
