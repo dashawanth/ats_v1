@@ -163,7 +163,7 @@ def single_page():
             df = pd.DataFrame([data])  # Convert the data to a DataFrame with a single row
             st.write(df[['Name', 'Phone Number', 'Email ID', 'Job Title', 'Skills']], hide_index=True, use_container_width=True)  # Display the DataFrame
             try:
-                save_to_csv([data], filename=r"s3://ats-files1/data/resume_output.csv")  # Use raw string to handle backslashes
+                save_to_csv([data], filename=r"s3://ats-files1/data/resumes_folder_output.csv")  # Use raw string to handle backslashes
             except OSError as e:
                 st.error(f"Failed to save to CSV: {e}")
             
