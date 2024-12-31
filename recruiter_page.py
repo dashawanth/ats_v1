@@ -39,13 +39,13 @@ def recruiter_page(recruiter_detail):
 
             updated_name = st.text_input("Name:", value=current_row["Name"])
             updated_email = st.text_input("Email:", value=current_row["Email"])
-            updated_phone_number = st.text_input("Phone Number (format: XXX-XXX-XXXX):", value=current_row["Phone_Number"])
+            updated_phone_number = st.text_input("Phone Number:", value=current_row["Phone_Number"], max_chars=11)
 
             # Validate phone number format
             if len(updated_phone_number) == 10 and updated_phone_number.isdigit():
                 updated_phone_number = f"{updated_phone_number[:3]}-{updated_phone_number[3:6]}-{updated_phone_number[6:]}"
-            elif len(updated_phone_number) != 12 or not updated_phone_number.replace("-", "").isdigit():
-                st.warning("Please enter a valid 10-digit phone number in the format XXX-XXX-XXXX.")
+            # elif len(updated_phone_number) != 12 or not updated_phone_number.replace("-", "").isdigit():
+            #     st.warning("Please enter a valid 10-digit phone number in the format XXX-XXX-XXXX.")
             updated_location = st.text_input("Location:", value=current_row["Location"])
             updated_designation = st.text_input("Designation:", value=current_row["Designation"])
 
@@ -76,13 +76,13 @@ def recruiter_page(recruiter_detail):
             #new_recruiter_id = st.text_input("Recruiter ID:")
             new_name = st.text_input("Name:")
             new_email = st.text_input("Email:")
-            new_phone_number = st.text_input("Phone Number (format: XXX-XXX-XXXX):", max_chars=10)
+            new_phone_number = st.text_input("Phone Number:", max_chars=10)
 
             # Validate phone number format
             if len(new_phone_number) == 10 and new_phone_number.isdigit():
                 new_phone_number = f"{new_phone_number[:3]}-{new_phone_number[3:6]}-{new_phone_number[6:]}"
-            elif len(new_phone_number) != 12 or not new_phone_number.replace("-", "").isdigit():
-                st.warning("Please enter a valid 10-digit phone number in the format XXX-XXX-XXXX.")
+            # elif len(new_phone_number) != 12 or not new_phone_number.replace("-", "").isdigit():
+            #     st.warning("Please enter a valid 10-digit phone number in the format XXX-XXX-XXXX.")
             new_location = st.text_input("Location:")
             new_designation = st.text_input("Designation:")
 
